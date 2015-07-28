@@ -65,18 +65,21 @@ class Router
   /**
    * Match the route
    *
+   * @param string   $url
    * @param callable $callback
    * @return void
    */
-  public function route($callback = null)
+  public function route($url = '', $callback = null)
   {
     if (empty($this->route[$this->method])) {
       return;
     }
 
+    $url = $url === '' ? $this->pathinfo : $url;
+
     foreach ($this->route[$this->method] as $route) {
 
-      if (preg_match_all('#^' . $route['pattern'] . '$#', $this->pathinfo, $matches, PREG_OFFSET_CAPTURE)) {
+      if (preg_match_all('#^' . $route['pattern'] . '$#', $url, $matches, PREG_OFFSET_CAPTURE)) {
         $matches = array_slice($matches, 1);
 
         $params = array_map(function ($match, $index) use ($matches) {

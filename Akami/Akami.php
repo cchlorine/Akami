@@ -136,10 +136,10 @@ class Akami
    * 
    * @return void
    */
-  public function run()
+  public function run($routeUrl = '')
   {
     set_error_handler(array('\Akami\Akami', 'handleErrors'));
-    $this->router->route();
+    $this->router->route($routeUrl);
     restore_error_handler();
   }
 
