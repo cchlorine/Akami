@@ -40,7 +40,6 @@ class Router
     $this->pathinfo = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
   }
 
-
   /**
    * Add Route
    * 
@@ -51,9 +50,13 @@ class Router
    */
   public function add($methods, $pattern, $callback)
   {
+    // Trim the `/` from $pattern
     $route = trim($pattern, '/');
 
+    // Push the array to the route
     foreach (explode('|', $methods) as $method) {
+
+      // When $callback is callable
       if (is_callable($callback)) {
         $this->route[$method][] = compact('pattern', 'callback');
       }
@@ -71,17 +74,20 @@ class Router
    */
   public function route($url = '', $callback = null)
   {
+    // When it cannot found the method in the route
     if (empty($this->route[$this->method])) {
       return;
     }
 
+    // When it has custom RouteURL
     $url = $url === '' ? $this->pathinfo : $url;
 
     foreach ($this->route[$this->method] as $route) {
-
+      // When match the pattern
       if (preg_match_all('#^' . $route['pattern'] . '$#', $url, $matches, PREG_OFFSET_CAPTURE)) {
         $matches = array_slice($matches, 1);
 
+        // Get the param(s)
         $params = array_map(function ($match, $index) use ($matches) {
           if (isset($matches[$index + 1]) && isset($matches[$index + 1][0]) && is_array($matches[$index + 1][0])) {
             return trim(substr($match[0][0], 0, $matches[$index + 1][0][1] - $match[0][1]), '/');
@@ -90,8 +96,9 @@ class Router
           }
         }, $matches, array_keys($matches));
 
+        // Run the callback
         call_user_func_array($route['callback'], $params);
-      } else {
+      } else { // When cannot match the route
         if (is_callable($callback)) {
           call_user_func($callback);
         }

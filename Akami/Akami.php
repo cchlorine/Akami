@@ -31,16 +31,22 @@ class Akami
    */
   static public function autoload($className)
   {
+    // Trim `\` from $className
     $className = ltrim($className, '\\');
 
+    // The base dir
+    $fileName = dirname(__DIR__) . DIRECTORY_SEPARATOR;
+
+    // When it has namespace
     if ($lastNamespacePos = strripos($className, '\\')) {
       $namespace = substr($className, 0, $lastNamespacePos);
       $className = substr($className, $lastNamespacePos + 1);
-      $fileName  = dirname(__DIR__) . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+      $fileName .= str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
     }
 
     $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
 
+    // When exists the file
     if (file_exists($fileName)) {
       require $fileName;
     }
@@ -63,6 +69,7 @@ class Akami
    */
   public function __construct()
   {
+    // New a router
     $this->router = new \Akami\Router;
 
     return $this;
@@ -139,7 +146,10 @@ class Akami
   public function run($routeUrl = '')
   {
     set_error_handler(array('\Akami\Akami', 'handleErrors'));
+
+    // Route the url
     $this->router->route($routeUrl);
+
     restore_error_handler();
   }
 
@@ -154,6 +164,7 @@ class Akami
    */
   static public function handleErrors($errno, $str = '', $file = '', $line = '')
   {
+    // When it cannot catch the error
     if (!($errno && error_reporting())) {
       return;
     }
