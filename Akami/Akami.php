@@ -139,6 +139,33 @@ class Akami
   }
 
   /**
+   * Configure Akami Settings
+   *
+   * @param  string|array $name
+   * @param  mixed        $value
+   * @return mixed
+   */
+  public function config($name, $value = null)
+  {
+    // When $name is array
+    if (is_array($name)) {
+      // When $value is true
+      if (true === $value) {
+        $this->settings = array_merge_recursive($this->settings, $name);
+      } else {
+        $this->settings = array_merge($this->settings, $name);
+      }
+    // When $name is string
+    } else if (func_num_args() === 1 && is_string($name)) {
+      return isset($this->settings[$name]) ? $this->settings[$name] : null;
+    } else {
+      $this->settings[$name] = $value;
+    }
+
+    return $this;
+  }
+
+  /**
    * Run the app
    * 
    * @return void
