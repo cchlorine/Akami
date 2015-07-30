@@ -82,7 +82,7 @@ class Router
     // When it has custom RouteURL
     $url = $url === '' ? $this->pathinfo : $url;
 
-    foreach ($this->route[$this->method] as $route) {
+    array_walk($this->route[$this->method], function($route) use ($url) {
       // When match the pattern
       if (preg_match_all('#^' . $route['pattern'] . '$#', $url, $matches, PREG_OFFSET_CAPTURE)) {
         $matches = array_slice($matches, 1);
@@ -103,6 +103,6 @@ class Router
           call_user_func($callback);
         }
       }
-    }
+    });
   }
 }
