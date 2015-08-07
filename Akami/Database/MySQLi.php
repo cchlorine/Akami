@@ -56,6 +56,57 @@ class MySQLi extends \Akami\Database
     return true;
   }
 
+  /**
+   * Check the availability of the database connection
+   *
+   * @return object
+   */
+  public function check()
+  {
+    if (empty($this->connection) || !mysqli_ping($this->connection))
+    {
+      $this->connect();
+    }
+
+    return $this->connection;
+  }
+
+  /**
+   * Execute a query
+   *
+   * @return array
+   */
+  public function query($query)
+  {
+    $data = array();
+
+    $this->check();
+    $result = mysqli_query($this->connection, $this->query);
+    array_push($this->logs, $query);
+
+    if ($this->result)
+    {
+      if (@mysqli_num_rows($result) > 0)
+      {
+        while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+          array_push($data, $row);
+        }
+
+        mysqli_free_result($result);
+      }
+        elseif (preg_match('/^select/i', trim($sql)))
+      {
+        return null;
+      }
+        else
+      {
+        return true;
+      }
+    }
+
+    return $data;
+  }
+
   public function close()
   {
     $this->connection = mysqli_close($this->connection);

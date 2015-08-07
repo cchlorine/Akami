@@ -31,39 +31,26 @@ class Database
    *
    * @var object
    */
-   protected $connection;
+  protected $connection;
 
-   /**
-    * Database adapter
-    *
-    * @var class
-    */
-   protected $adapter;
+  /**
+   * Database adapter
+   *
+   * @var class
+   */
+  protected $adapter;
 
-   /**
-    * SQL Query
-    *
-    * @var string
-    */
-   public $query = '';
+  /**
+   * SQL Query
+   *
+   * @var string
+   */
+  protected $query = '';
 
-   /**
-    * Error Message
-    *
-    * @var string
-    */
-   public $error = '';
-
-   /**
-    * Error Number
-    *
-    * @var int
-    */
-   public $errno = 0;
-
-   public $num_rows  = 0;
-   public $insert_id = 0;
-   public $affected_rows = 0;
+  /**
+   * Log
+   */
+  protected $logs = array();
 
   /**
    * Class Construction
