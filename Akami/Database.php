@@ -13,7 +13,7 @@ namespace Akami;
 class Database
 {
   /**
-   * NySQL Connection Data
+   * NySQL connection data
    *
    * @var array
    */
@@ -27,12 +27,16 @@ class Database
   );
 
   /**
-   * Database Connection
+   * Database connection
+   *
+   * @var object
    */
    protected $connection;
 
    /**
-    * Database adapterrary
+    * Database adapter
+    *
+    * @var class
     */
    protected $adapter;
 
@@ -66,27 +70,38 @@ class Database
    */
   public function __construct($config = array())
   {
-    if (!$config) {
+    if (!$config)
+    {
       return false;
     }
 
-    foreach ($config as $key => $value) {
-      if (in_array($key, $this->config)) {
+    foreach ($config as $key => $value)
+    {
+      if (in_array($key, $this->config))
+      {
         $this->config[$key] = $value;
       }
     }
 
     $database_type  = isset($config['database_type']) ? strtolower($config['database_type']) : 'mysql';
 
-    switch ($database_type) {
+    switch ($database_type)
+    {
       case 'mysql':
-        if (isset($config['adapter'])) {
+        if (isset($config['adapter']))
+        {
           $adapter = ucfirst(strtolower($config['addapter']));
-        } else if (class_exists('MySQLi')) {
+        }
+          else if (class_exists('MySQLi'))
+        {
           $adapter = 'Mysqli';
-        } else if (class_exists('PDO')) {
+        }
+          else if (class_exists('PDO'))
+        {
           $adapter = 'PDO';
-        } else {
+        }
+          else
+        {
           $adapter = 'Mysql';
         }
 
@@ -104,7 +119,8 @@ class Database
    */
   public function __destruct()
   {
-    if ($this->adapter) {
+    if ($this->adapter)
+    {
       $this->adapter->close();
     }
   }

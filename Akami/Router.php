@@ -41,7 +41,7 @@ class Router
   }
 
   /**
-   * Add Route
+   * Add route
    *
    * @param mixed    $method
    * @param string   $route

@@ -38,7 +38,8 @@ class Akami
     $fileName = dirname(__DIR__) . DIRECTORY_SEPARATOR;
 
     // When it has namespace
-    if ($lastNamespacePos = strripos($className, '\\')) {
+    if ($lastNamespacePos = strripos($className, '\\'))
+    {
       $namespace = substr($className, 0, $lastNamespacePos);
       $className = substr($className, $lastNamespacePos + 1);
       $fileName .= str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
@@ -47,7 +48,8 @@ class Akami
     $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
 
     // When exists the file
-    if (file_exists($fileName)) {
+    if (file_exists($fileName))
+    {
       require $fileName;
     }
   }
@@ -72,7 +74,8 @@ class Akami
     // New router
     $this->router = new \Akami\Router;
 
-    if (isset($config['database']) && is_array($config['database'])) {
+    if (isset($config['database']) && is_array($config['database']))
+    {
       $this->database = new \Akami\Database($config['database']);
     }
 
@@ -152,17 +155,25 @@ class Akami
   public function config($name, $value = null)
   {
     // When $name is array
-    if (is_array($name)) {
+    if (is_array($name))
+    {
       // When $value is true
-      if (true === $value) {
+      if (true === $value)
+      {
         $this->settings = array_merge_recursive($this->settings, $name);
-      } else {
+      }
+        else
+      {
         $this->settings = array_merge($this->settings, $name);
       }
-    // When $name is string
-    } else if (func_num_args() === 1 && is_string($name)) {
+    }
+      // When $name is string
+      else if (func_num_args() === 1 && is_string($name))
+    {
       return isset($this->settings[$name]) ? $this->settings[$name] : null;
-    } else {
+    }
+      else
+    {
       $this->settings[$name] = $value;
     }
 
@@ -196,7 +207,8 @@ class Akami
   static public function handleErrors($errno, $str = '', $file = '', $line = '')
   {
     // When it cannot catch the error
-    if (!($errno && error_reporting())) {
+    if (!($errno && error_reporting()))
+    {
       return;
     }
 
