@@ -54,7 +54,7 @@ class Akami
 
   /**
    * Register Slim's PSR-0 autoloader
-   * 
+   *
    * @return void
    */
   static public function registerAutoloader()
@@ -64,20 +64,24 @@ class Akami
 
   /**
    * Constructor Akami
-   * 
+   *
    * @return \Akami\Akami
    */
-  public function __construct()
+  public function __construct($config = array())
   {
-    // New a router
+    // New router
     $this->router = new \Akami\Router;
+
+    if (isset($config['database']) && is_array($config['database'])) {
+      $this->database = new \Akami\Database($config['database']);
+    }
 
     return $this;
   }
 
   /**
    * Add route
-   * 
+   *
    * @param string $method
    * @param string $route
    * @param mixed  $callback
@@ -92,7 +96,7 @@ class Akami
 
   /**
    * Add get route
-   * 
+   *
    * @param string $route
    * @param mixed  $callback
    * @return \Akami\Akami
@@ -104,7 +108,7 @@ class Akami
 
   /**
    * Add post route
-   * 
+   *
    * @param  string $route
    * @param  mixed  $callback
    * @return \Akami\Akami
@@ -116,7 +120,7 @@ class Akami
 
   /**
    * Add put route
-   * 
+   *
    * @param  string $route
    * @param  mixed  $callback
    * @return \Akami\Akami
@@ -128,7 +132,7 @@ class Akami
 
   /**
    * Add delete route
-   * 
+   *
    * @param  string $route
    * @param  mixed  $callback
    * @return \Akami\Akami
@@ -167,7 +171,7 @@ class Akami
 
   /**
    * Run the app
-   * 
+   *
    * @return void
    */
   public function run($routeUrl = '')

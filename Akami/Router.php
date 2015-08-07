@@ -1,7 +1,7 @@
 <?php
 /**
  * Akami Router
- * 
+ *
  * @author Rakume Hayashi <i@fake.moe>
  * @copyright 2015 Lingoys!Art.
  * @version 1.0
@@ -14,21 +14,21 @@ class Router
 {
   /**
    * Method
-   * 
+   *
    * @var string
    */
   protected $method;
 
   /**
    * Route
-   * 
+   *
    * @var array
    */
   protected $route = array();
 
   /**
    * Constructor
-   * 
+   *
    * @return void
    */
   public function __construct()
@@ -42,7 +42,7 @@ class Router
 
   /**
    * Add Route
-   * 
+   *
    * @param mixed    $method
    * @param string   $route
    * @param callable $callback
