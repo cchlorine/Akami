@@ -122,7 +122,7 @@ class MySQLi extends \Akami\Database
     //
   }
 
-  public function delete()
+  public function delete($table, $where)
   {
     //
   }
@@ -132,7 +132,7 @@ class MySQLi extends \Akami\Database
    *
    * @param string $table
    * @param array  $data
-   * @return \Akami\Database
+   * @return array|int
    */
   public function insert($table, $data)
   {

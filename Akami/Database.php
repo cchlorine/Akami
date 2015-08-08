@@ -77,7 +77,7 @@ class Database
       case 'mysql':
         if (isset($config['adapter']))
         {
-          $adapter = ucfirst(strtolower($config['addapter']));
+          $adapter = ucfirst(strtolower($config['adapter']));
         }
           else if (class_exists('MySQLi'))
         {
@@ -99,6 +99,8 @@ class Database
 
     $this->adapter = new $adapter;
     $this->adapter->connect();
+
+    return $this->adapter;
   }
 
   /**
@@ -110,15 +112,5 @@ class Database
     {
       $this->adapter->close();
     }
-  }
-
-  /**
-   * Get database instance
-   *
-   * @return \Akami\Database
-   */
-  protected function getInstance()
-  {
-    return $this;
   }
 }
