@@ -111,4 +111,14 @@ class Database
       $this->adapter->close();
     }
   }
+
+  /**
+   * Get database instance
+   *
+   * @return \Akami\Database
+   */
+  protected function getInstance()
+  {
+    return $this;
+  }
 }

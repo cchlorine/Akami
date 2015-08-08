@@ -72,17 +72,27 @@ class MySQLi extends \Akami\Database
   }
 
   /**
-   * Execute a query
+   * Excute query
+   *
+   * @return array
+   */
+  public function exec($query)
+  {
+    $this->check();
+    array_push($this->logs, $query);
+
+    return mysqli_query($this->connection, $this->query);
+  }
+
+  /**
+   * Query
    *
    * @return array
    */
   public function query($query)
   {
     $data = array();
-
-    $this->check();
-    $result = mysqli_query($this->connection, $this->query);
-    array_push($this->logs, $query);
+    $result = $this->exec($query);
 
     if ($this->result)
     {
@@ -107,8 +117,75 @@ class MySQLi extends \Akami\Database
     return $data;
   }
 
+  public function select()
+  {
+    //
+  }
+
+  public function delete()
+  {
+    //
+  }
+
+  /**
+   * Insert data
+   *
+   * @param string $table
+   * @param array  $data
+   * @return \Akami\Database
+   */
+  public function insert($table, $data)
+  {
+    if (is_array($data))
+    {
+      $data = array($data);
+    }
+
+    $conditions;
+
+    foreach ($data as $key => $item)
+    {
+      $conditions[] = '`' . $key . '` = "' . $this->escape_value($item) . '"';
+    }
+
+    $sql = 'INSERT INTO `' . $table . '` SET ' . implode(', ', $conditions) . ';';
+
+    if ($this->exec($sql))
+    {
+      return mysqli_insert_id($this->connection);
+    }
+      else
+    {
+      return 0;
+    }
+  }
+
   public function close()
   {
     $this->connection = mysqli_close($this->connection);
   }
+
+  /**
+	 * Filter special characters
+	 *
+	 * @param string|array $value
+	 * @return string|array
+	 */
+	protected function escape_value($value)
+	{
+		if (is_array($value))
+    {
+			foreach ($value as $k => $v)
+			{
+				$value[$k] = call_user_func('escape_value', $value[$k]);;
+			}
+		}
+      else
+    {
+			$value = mysqli_real_escape_string($this->connection, $value);
+		}
+
+		return $value;
+	}
+
 }
