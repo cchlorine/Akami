@@ -126,7 +126,7 @@ class MySQLi extends \Akami\Database
    */
   public function insert($table, $data)
   {
-    if (is_array($data))
+    if (!is_array($data))
     {
       $data = array($data);
     }
