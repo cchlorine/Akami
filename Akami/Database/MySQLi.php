@@ -158,8 +158,6 @@ class MySQLi extends \Akami\Database
 	 */
 	protected function escape_value($value)
 	{
-    return is_array($value) ? array_map(array('\\Akami\\Database\\', 'stripslashesDeep'), $value) : stripslashes($value);
-
 		if (is_array($value))
     {
 			foreach ($value as $k => $v)
