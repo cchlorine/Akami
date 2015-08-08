@@ -13,27 +13,6 @@ namespace Akami;
 class Database
 {
   /**
-   * NySQL connection data
-   *
-   * @var array
-   */
-  protected $config = array(
-    'hostname' => 'localhost',
-    'username' => 'root',
-    'password' => '',
-    'database' => '',
-    'pconnect' => true,
-    'charset'  => 'utf8'
-  );
-
-  /**
-   * Database connection
-   *
-   * @var object
-   */
-  protected $connection;
-
-  /**
    * Database adapter
    *
    * @var class
@@ -62,15 +41,7 @@ class Database
       return false;
     }
 
-    foreach ($config as $key => $value)
-    {
-      if (in_array($key, $this->config))
-      {
-        $this->config[$key] = $value;
-      }
-    }
-
-    $database_type  = isset($config['database_type']) ? strtolower($config['database_type']) : 'mysql';
+    $database_type = isset($config['database_type']) ? strtolower($config['database_type']) : 'mysql';
 
     switch ($database_type)
     {
@@ -96,21 +67,16 @@ class Database
     }
 
     $adapter = '\\Akami\\Database\\' . $adapter;
-
-    $this->adapter = new $adapter;
-    $this->adapter->connect();
-
-    return $this->adapter;
+    $this->adapter = new $adapter($config);
   }
 
   /**
-   * Class desctruction
+   * Get the instance of adapter
+   *
+   * @return \Akami\Database\[Adapter]
    */
-  public function __destruct()
+  public function getInstance()
   {
-    if ($this->adapter)
-    {
-      $this->adapter->close();
-    }
+    return $this->adapter;
   }
 }

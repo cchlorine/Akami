@@ -12,63 +12,59 @@ namespace Akami\Database;
 
 class MySQLi extends \Akami\Database
 {
+  /**
+   * MySQL connection data
+   *
+   * @var array
+   */
+  protected $config = array(
+    'hostname' => 'localhost',
+    'username' => 'root',
+    'password' => '',
+    'database' => '',
+    'pconnect' => true,
+    'charset'  => 'utf8'
+  );
 
   /**
    * Class construction
    *
    * @return void
    */
-  public function __construct()
+  public function __construct($config)
   {
-    return;
+    foreach ($config as $key => $value)
+    {
+      if (in_array($key, $this->config))
+      {
+        $this->config[$key] = $value;
+      }
+    }
   }
 
   /**
-   * Connect to the database
+   * Connect to the mysqli
    *
-   * @return boolean
+   * @return \MySQLi
    */
   public function connect()
   {
-    if ($this->connection)
-    {
-      $this->connection = mysqli_close($this->connection);
-    }
-
-    $this->connection = mysqli_connect($this->config['hostname'], $this->config['username'], $this->config['password'], $this->config['database']);
-
-    if (mysqli_connect_error())
-    {
-      $this->error = 'Cannot connect to server: (#' . mysqli_connect_errno() .') ' . mysqli_connect_error();
-      $this->errno = mysqli_connect_errno();
-
-      return false;
-    }
-
-    if (!mysqli_set_charset($this->connection, $this->config['charset']))
-    {
-      $this->error = 'Cannot set charset: ' . mysqli_error($this->connection);
-      $this->errno = mysqli_errno($this->connection);
-
-      return false;
-    }
-
-    return true;
+    return $this->mysqli = new \MySQLi($this->config['hostname'], $this->config['username'], $this->config['password'], $this->config['database']);
   }
 
   /**
    * Check the availability of the database connection
    *
-   * @return object
+   * @return \MySQLi
    */
   public function check()
   {
-    if (empty($this->connection) || !mysqli_ping($this->connection))
+    if (empty($this->mysqli) || !$this->mysqli->ping())
     {
       $this->connect();
     }
 
-    return $this->connection;
+    return $this->mysqli;
   }
 
   /**
@@ -81,7 +77,7 @@ class MySQLi extends \Akami\Database
     $this->check();
     array_push($this->logs, $query);
 
-    return mysqli_query($this->connection, $this->query);
+    return $this->mysqli->query($query);
   }
 
   /**
@@ -94,24 +90,18 @@ class MySQLi extends \Akami\Database
     $data = array();
     $result = $this->exec($query);
 
-    if ($this->result)
+    if ($this->mysqli->affected_rows > 0)
     {
-      if (@mysqli_num_rows($result) > 0)
-      {
-        while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-          array_push($data, $row);
-        }
-
-        mysqli_free_result($result);
-      }
-        elseif (preg_match('/^select/i', trim($sql)))
-      {
-        return null;
-      }
-        else
-      {
-        return true;
-      }
+      $data = $result->fetch_all();
+      $result->free();
+    }
+      elseif (preg_match('/^select/i', trim($query)))
+    {
+      return null;
+    }
+      else
+    {
+      return true;
     }
 
     return $data;
@@ -141,7 +131,7 @@ class MySQLi extends \Akami\Database
       $data = array($data);
     }
 
-    $conditions;
+    $conditions = array();
 
     foreach ($data as $key => $item)
     {
@@ -152,17 +142,12 @@ class MySQLi extends \Akami\Database
 
     if ($this->exec($sql))
     {
-      return mysqli_insert_id($this->connection);
+      return $this->mysqli->affected_rows;
     }
       else
     {
       return 0;
     }
-  }
-
-  public function close()
-  {
-    $this->connection = mysqli_close($this->connection);
   }
 
   /**
@@ -173,19 +158,25 @@ class MySQLi extends \Akami\Database
 	 */
 	protected function escape_value($value)
 	{
+    return is_array($value) ? array_map(array('\\Akami\\Database\\', 'stripslashesDeep'), $value) : stripslashes($value);
+
 		if (is_array($value))
     {
 			foreach ($value as $k => $v)
 			{
-				$value[$k] = call_user_func('escape_value', $value[$k]);;
+				$value[$k] = $this->mysqli->escape_string($v);
 			}
 		}
       else
     {
-			$value = mysqli_real_escape_string($this->connection, $value);
+			$value = $this->mysqli->escape_string($value);
 		}
 
 		return $value;
 	}
 
+  public function close()
+  {
+    $this->mysqli->close();
+  }
 }

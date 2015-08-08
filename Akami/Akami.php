@@ -76,7 +76,8 @@ class Akami
 
     if (isset($config['database']) && is_array($config['database']))
     {
-      $this->database = new \Akami\Database($config['database']);
+      $database = new \Akami\Database($config['database']);
+      $this->database = $database->getInstance();
     }
 
     return $this;
