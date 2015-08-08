@@ -107,22 +107,28 @@ class MySQLi extends \Akami\Database
     return $data;
   }
 
-  public function select()
+  /**
+   * Produce where clause
+   *
+   * @param string $where
+   * @return string
+   */
+  protected function where($where)
   {
-    //
-  }
+    $clause = '';
 
-  public function delete($table, $where)
-  {
-    //
+    if (is_array($where))
+    {
+      //
+    }
   }
 
   /**
-   * Insert data
+   * Insert data to the table
    *
    * @param string $table
    * @param array  $data
-   * @return array|int
+   * @return int
    */
   public function insert($table, $data)
   {
@@ -148,6 +154,16 @@ class MySQLi extends \Akami\Database
     {
       return 0;
     }
+  }
+
+  /**
+   * Delete data form table
+   *
+   * @return int
+   */
+  public function delete($table, $where)
+  {
+    return $this->exec('DELETE FROM `' . $table . '`' . $this->where($whre));
   }
 
   /**
