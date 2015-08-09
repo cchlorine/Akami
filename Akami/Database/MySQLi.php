@@ -95,7 +95,7 @@ class MySQLi extends \Akami\Database
       $data = $result->fetch_all();
       $result->free();
     }
-      elseif (preg_match('/^select/i', trim($query)))
+      else if (preg_match('/^select/i', trim($query)))
     {
       return null;
     }
