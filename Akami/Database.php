@@ -52,7 +52,7 @@ class Database
         }
           else if (class_exists('MySQLi'))
         {
-          $adapter = 'Mysqli';
+          $adapter = 'MySQLi';
         }
           else if (class_exists('PDO'))
         {
