@@ -33,6 +33,7 @@ class MySQLi extends \Akami\Database
    */
   public function __construct($config)
   {
+    // Load Config
     foreach ($config as $key => $value)
     {
       if (in_array($key, $this->config))

@@ -17,7 +17,7 @@ class Database
    *
    * @var class
    */
-  protected $adapter;
+  private $adapter;
 
   /**
    * SQL Query
@@ -32,18 +32,18 @@ class Database
   protected $logs = array();
 
   /**
-   * Class Construction
+   * Init adapter
    */
-  public function __construct($config = array())
+  static public function init($config = array())
   {
     if (!$config)
     {
       return false;
     }
 
-    $database_type = isset($config['database_type']) ? strtolower($config['database_type']) : 'mysql';
+    $type = isset($config['database_type']) ? strtolower($config['database_type']) : 'mysql';
 
-    switch ($database_type)
+    switch ($type)
     {
       case 'mysql':
         if (isset($config['adapter']))
@@ -64,19 +64,27 @@ class Database
         }
 
         break;
+
+      case 'mssql':
+        break;
+
+      case 'file':
+        break;
     }
 
     $adapter = '\\Akami\\Database\\' . $adapter;
-    $this->adapter = new $adapter($config);
+    $adapter = new $adapter($config);
+
+    return $adapter;
   }
 
   /**
-   * Get the instance of adapter
+   * Print log
    *
-   * @return \Akami\Database\[Adapter]
+   * @return array
    */
-  public function getInstance()
+  public function log()
   {
-    return $this->adapter;
+    return $this->logs;
   }
 }
