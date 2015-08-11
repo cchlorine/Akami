@@ -41,6 +41,8 @@ class MySQLi extends \Akami\Database
         $this->config[$key] = $value;
       }
     }
+
+    $this->connect();
   }
 
   /**
@@ -48,7 +50,7 @@ class MySQLi extends \Akami\Database
    *
    * @return \MySQLi
    */
-  public function connect()
+  protected function connect()
   {
     return $this->mysqli = new \MySQLi($this->config['hostname'], $this->config['username'], $this->config['password'], $this->config['database']);
   }
@@ -71,6 +73,7 @@ class MySQLi extends \Akami\Database
   /**
    * Excute query
    *
+   * @param string $query
    * @return array
    */
   public function exec($query)
@@ -84,6 +87,7 @@ class MySQLi extends \Akami\Database
   /**
    * Query
    *
+   * @param string $query
    * @return array
    */
   public function query($query)
@@ -190,6 +194,9 @@ class MySQLi extends \Akami\Database
 		return $value;
 	}
 
+  /**
+   * Close the connection
+   */
   public function close()
   {
     $this->mysqli->close();
