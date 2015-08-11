@@ -1,6 +1,6 @@
 <?php
 /**
- * Database / Mysqli
+ * Database / Mysql
  *
  * @author Rakume Hayashi <i@fake.moe>
  * @copyright 2015 Lingoys!Art.
@@ -10,7 +10,7 @@
 
 namespace Akami\Database;
 
-class MySQLi extends \Akami\Database
+class MySQL extends \Akami\Database
 {
   /**
    * MySQL connection data
@@ -52,10 +52,19 @@ class MySQLi extends \Akami\Database
    */
   protected function connect()
   {
-    $config   = $this->config;
-    $hostname = $config['pconnect'] === true ? 'p:' . $config['hostname'] : $config['hostname'];
+    $config = $this->config;
 
-    return $this->connection = new \MySQLi($config['hostname'], $config['username'], $config['password'], $config['database']);
+    if ($pconnect)
+    {
+      $link = mysql_pconnect($config['hostname'], $config['username'], $config['password'], MYSQL_CLIENT_COMPRESS);
+    }
+      else
+    {
+      $link = mysql_connect($config['hostname'], $config['username'], $config['password'], 1, MYSQL_CLIENT_COMPRESS);
+    }
+
+    $this->select_db($config['database']);
+    return $this->connection;
   }
 
   /**
@@ -66,7 +75,7 @@ class MySQLi extends \Akami\Database
    */
   public function select_db($database = '')
   {
-    return $this->connection->select_db($database);
+    return mysql_select_db($this->connection, $database);
   }
 
   /**
@@ -76,7 +85,7 @@ class MySQLi extends \Akami\Database
    */
   public function check()
   {
-    if (empty($this->connection) || !$this->connection->ping())
+    if (empty($this->connection) || !mysqli_ping($this->connection))
     {
       $this->connect();
     }
@@ -95,7 +104,7 @@ class MySQLi extends \Akami\Database
     $this->check();
     array_push($this->logs, $query);
 
-    return $this->connection->query($query);
+    return mysql_query($this->connection, $query);
   }
 
   /**
@@ -192,7 +201,7 @@ class MySQLi extends \Akami\Database
    */
   public function affected_rows()
   {
-    return $this->connection->affected_rows;
+    return mysql_affected_rows($this->connection);
   }
 
   /**
@@ -202,7 +211,7 @@ class MySQLi extends \Akami\Database
    */
   public function error()
   {
-    return $this->connection->error;
+    return mysql_error($this->connection);
   }
 
   /**
@@ -212,7 +221,7 @@ class MySQLi extends \Akami\Database
    */
    public function errno()
    {
-     return $this->connection->errno;
+     return mysql_errno($this->connection);
    }
 
   /**
@@ -222,7 +231,7 @@ class MySQLi extends \Akami\Database
    */
   public function version()
   {
-    return $this->connection->server_info;
+    return mysql_get_server_info($this->connection);
   }
 
   /**
@@ -232,7 +241,7 @@ class MySQLi extends \Akami\Database
    */
   public function close()
   {
-    return $this->connection->close();
+    return mysql_close($this->connection);
   }
 
   /**
@@ -247,12 +256,12 @@ class MySQLi extends \Akami\Database
     {
       foreach ($value as $k => $v)
       {
-        $value[$k] = $this->connection->escape_string($v);
+        $value[$k] = mysql_escape_string($v);
       }
     }
       else
     {
-      $value = $this->connection->escape_string($value);
+      $value = mysql_escape_string($value);
     }
 
     return $value;
