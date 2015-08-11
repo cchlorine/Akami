@@ -60,7 +60,7 @@ class Database
         }
           else
         {
-          $adapter = 'Mysql';
+          $adapter = 'MySQL';
         }
 
         break;
