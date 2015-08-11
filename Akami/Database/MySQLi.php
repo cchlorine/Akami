@@ -194,7 +194,7 @@ class MySQLi extends \Akami\Database
    * @param string $value
    * @return string
    */
-  protected function quoteValue(value)
+  protected function quoteValue($value)
   {
     return '\'' . str_replace(array('\'', '\\'), array('\'\'', '\\\\'), $string) . '\'';
   }
