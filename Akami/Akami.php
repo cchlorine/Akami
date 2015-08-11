@@ -71,6 +71,9 @@ class Akami
    */
   public function __construct($config = array())
   {
+    set_error_handler(array($this, 'handleErrors'));
+    set_exception_handler(array($this, 'handleException'));
+
     // New router
     $this->router = new \Akami\Router;
 
@@ -187,12 +190,11 @@ class Akami
    */
   public function run($routeUrl = '')
   {
-    set_error_handler(array('\Akami\Akami', 'handleErrors'));
-
     // Route the url
     $this->router->route($routeUrl);
 
     restore_error_handler();
+    restore_exception_handler();
   }
 
   /**
@@ -204,7 +206,7 @@ class Akami
    * @param string $line  The line of the affected file
    * @throws \ErrorException
    */
-  static public function handleErrors($errno, $str = '', $file = '', $line = '')
+  public function handleErrors($errno, $str = '', $file = '', $line = '')
   {
     // When it cannot catch the error
     if (!($errno && error_reporting()))
@@ -213,6 +215,111 @@ class Akami
     }
 
     throw new \ErrorException($str, $errno, 0, $file, $line);
+  }
+
+  /**
+   * Handle with exceptions
+   *
+   * @param exception $e
+   */
+  public function handleException($e)
+  {
+    $msg = '';
+    $trace = $e->getTrace();
+    ksort($trace);
+
+    foreach ($trace as $error)
+    {
+      if (isset($error['function']) && isset($error['file']))
+      {
+        $msg .= $error['file'] . '&nbsp;(' . $error['line'] . ') ';
+
+        if (isset($error['function']) && is_string($error['function']))
+        {
+          $msg .= (isset($error['class']) ? $error['class'] . $error['type'] : '') . $error['function'] . '()';
+        }
+
+        $msg .= '<br />';
+      }
+    }
+
+    echo <<<EOT
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Akami Framework</title>
+</head>
+<body>
+    <style>
+        html, body {
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            width: 100%;
+            display: table;
+
+            background: #16938A;
+            color: #333;
+            font-size: 14px;
+            line-height: 1.825;
+            font-family: "Lucida Grande", Helvetica, Arial, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans","wenquanyi micro hei","Hiragino Sans GB", "Hiragino Sans GB W3", Arial, sans-serif
+        }
+
+        .box {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .box .container {
+            background: #fff;
+            width: 500px;
+            margin: 0 auto;
+            padding: 2em;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+        }
+
+        header {
+          color: #999;
+          display: block;
+          margin-bottom: 1em;
+        }
+
+        .bold {
+          color: #222;
+          font-weight: bold;
+        }
+
+        p {
+            color: #222;
+        }
+
+        .message {
+          color: #777;
+          font-size: 12px;
+
+          margin-top: 1em;
+          margin-bottom: 0;
+        }
+    </style>
+    <div class="box">
+        <div class="container">
+            <header>
+              <span class="bold">Message Reminder</span>
+               - {$e->getMessage()}
+            </header>
+            <p class="file"><span class="bold">Location: </span> - FILE: {$e->getfile()} LINE: {$e->getLine()}</p>
+            <p class="message">{$msg}</p>
+        </div>
+    </div>
+</body>
+</html>
+EOT;
   }
 
   /**
