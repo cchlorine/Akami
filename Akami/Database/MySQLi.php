@@ -195,6 +195,16 @@ class MySQLi extends \Akami\Database
 	}
 
   /**
+   * Get the version of MySQL Server
+   *
+   * @return string
+   */
+  public function version()
+  {
+    return $this->mysqli->server_info;
+  }
+
+  /**
    * Close the connection
    */
   public function close()
