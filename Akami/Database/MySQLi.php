@@ -52,7 +52,10 @@ class MySQLi extends \Akami\Database
    */
   protected function connect()
   {
-    return $this->mysqli = new \MySQLi($this->config['hostname'], $this->config['username'], $this->config['password'], $this->config['database']);
+    $config   = $this->config;
+    $hostname = $config['pconnect'] === true ? 'p:' . $config['hostname'] : $config['hostname'];
+
+    return $this->mysqli = new \MySQLi($config['hostname'], $config['username'], $config['password'], $config['database']);
   }
 
   /**
