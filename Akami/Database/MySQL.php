@@ -73,7 +73,7 @@ class MySQL extends \Akami\Database
    * @param string $database
    * @return boolean
    */
-  public function select_db($database = '')
+  public function selectDb($database = '')
   {
     return mysql_select_db($this->connection, $database);
   }
@@ -195,13 +195,49 @@ class MySQL extends \Akami\Database
   }
 
   /**
+   * Filter value
+   *
+   * @param string $value
+   * @return string
+   */
+  protected function quoteValue(value)
+  {
+    return '\'' . str_replace(array('\'', '\\'), array('\'\'', '\\\\'), $string) . '\'';
+  }
+
+  /**
+   * Fitler cloumn
+   *
+   * @param string $value
+   * @return string
+   */
+  public function quoteColumn($value)
+  {
+    return '`' . $value . '`';
+  }
+
+  /**
    * Get affected rows
    *
+   * @param mixed $handle
    * @return int
    */
-  public function affected_rows()
+  public function affectedRows($handle = null)
   {
-    return mysql_affected_rows($this->connection);
+    $handle = $handle ? $handle : $this->connection;
+
+    return mysql_affected_rows($handle);
+  }
+
+  /**
+   * Last insert id
+   *
+   * @param mixed $handle
+   * @return int
+   */
+  public function lastInsertId($handle = null)
+  {
+    $handle = $handle ? $handle : $this->connection;
   }
 
   /**
@@ -242,28 +278,5 @@ class MySQL extends \Akami\Database
   public function close()
   {
     return mysql_close($this->connection);
-  }
-
-  /**
-   * Filter special characters
-   *
-   * @param string|array $value
-   * @return string|array
-   */
-  protected function escape_value($value)
-  {
-    if (is_array($value))
-    {
-      foreach ($value as $k => $v)
-      {
-        $value[$k] = mysql_escape_string($v);
-      }
-    }
-      else
-    {
-      $value = mysql_escape_string($value);
-    }
-
-    return $value;
   }
 }

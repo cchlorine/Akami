@@ -64,7 +64,7 @@ class MySQLi extends \Akami\Database
    * @param string $database
    * @return boolean
    */
-  public function select_db($database = '')
+  public function selectDb($database = '')
   {
     return $this->connection->select_db($database);
   }
@@ -186,13 +186,57 @@ class MySQLi extends \Akami\Database
   }
 
   /**
+   * Filter value
+   *
+   * @param string $value
+   * @return string
+   */
+  protected function quoteValue(value)
+  {
+    return '\'' . str_replace(array('\'', '\\'), array('\'\'', '\\\\'), $string) . '\'';
+  }
+
+  /**
+   * Fitler cloumn
+   *
+   * @param string $value
+   * @return string
+   */
+  public function quoteColumn($value)
+  {
+    return '`' . $value . '`';
+  }
+
+  /**
    * Get affected rows
    *
+   * @param mixed $handle
    * @return int
    */
-  public function affected_rows()
+  public function affectedRows($handle = null)
   {
+    if ($handle)
+    {
+      return $handle->affected_rows;
+    }
+
     return $this->connection->affected_rows;
+  }
+
+  /**
+   * Last insert id
+   *
+   * @param mixed $handle
+   * @return int
+   */
+  public function lastInsertId($handle = null)
+  {
+    if ($handle)
+    {
+      return $handle->affected_rows;
+    }
+
+    return $this->connection->insert_id;
   }
 
   /**
