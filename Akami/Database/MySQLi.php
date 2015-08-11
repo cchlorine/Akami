@@ -56,6 +56,17 @@ class MySQLi extends \Akami\Database
   }
 
   /**
+   * Select Database
+   *
+   * @param string $database
+   * @return boolean
+   */
+  public function select_db($database = '')
+  {
+    return $this->mysqli->select_db($database);
+  }
+
+  /**
    * Check the availability of the database connection
    *
    * @return \MySQLi
@@ -76,7 +87,7 @@ class MySQLi extends \Akami\Database
    * @param string $query
    * @return array
    */
-  public function exec($query)
+  protected function exec($query)
   {
     $this->check();
     array_push($this->logs, $query);
@@ -172,27 +183,34 @@ class MySQLi extends \Akami\Database
   }
 
   /**
-	 * Filter special characters
-	 *
-	 * @param string|array $value
-	 * @return string|array
-	 */
-	protected function escape_value($value)
-	{
-		if (is_array($value))
-    {
-			foreach ($value as $k => $v)
-			{
-				$value[$k] = $this->mysqli->escape_string($v);
-			}
-		}
-      else
-    {
-			$value = $this->mysqli->escape_string($value);
-		}
+   * Get affected rows
+   *
+   * @return int
+   */
+  public function affected_rows()
+  {
+    return $this->mysqli->affected_rows;
+  }
 
-		return $value;
-	}
+  /**
+   * Get error text
+   *
+   * @return string
+   */
+  public function error()
+  {
+    return $this->mysqli->error;
+  }
+
+  /**
+   * Get error number
+   *
+   * @return int
+   */
+   public function errno()
+   {
+     return $this->mysqli->errno;
+   }
 
   /**
    * Get the version of MySQL Server
@@ -210,5 +228,28 @@ class MySQLi extends \Akami\Database
   public function close()
   {
     $this->mysqli->close();
+  }
+
+  /**
+   * Filter special characters
+   *
+   * @param string|array $value
+   * @return string|array
+   */
+  protected function escape_value($value)
+  {
+    if (is_array($value))
+    {
+      foreach ($value as $k => $v)
+      {
+        $value[$k] = $this->mysqli->escape_string($v);
+      }
+    }
+      else
+    {
+      $value = $this->mysqli->escape_string($value);
+    }
+
+    return $value;
   }
 }
