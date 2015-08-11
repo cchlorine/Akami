@@ -64,6 +64,8 @@ class MySQL extends \Akami\Database
     }
 
     $this->select_db($config['database']);
+    mysql_set_charset($this->connection, $config['charset']);
+
     return $this->connection;
   }
 

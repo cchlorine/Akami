@@ -55,7 +55,10 @@ class MySQLi extends \Akami\Database
     $config   = $this->config;
     $hostname = $config['pconnect'] === true ? 'p:' . $config['hostname'] : $config['hostname'];
 
-    return $this->connection = new \MySQLi($config['hostname'], $config['username'], $config['password'], $config['database']);
+    $this->connection = new \MySQLi($config['hostname'], $config['username'], $config['password'], $config['database']);
+    $this->connection->set_charset($config['charset']);
+
+    return $this->connection;
   }
 
   /**
