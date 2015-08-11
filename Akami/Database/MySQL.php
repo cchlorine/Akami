@@ -120,7 +120,7 @@ class MySQL extends \Akami\Database
     $data = array();
     $result = $this->exec($query);
 
-    if ($this->affected_rows() > 0)
+    if ($this->affectedRows() > 0)
     {
       $data = $result->fetch_all();
       $result->free();
@@ -178,7 +178,7 @@ class MySQL extends \Akami\Database
 
     if ($this->exec($sql))
     {
-      return $this->affected_rows();
+      return $this->affectedRows();
     }
       else
     {
