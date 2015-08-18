@@ -42,7 +42,9 @@ class MySQLi extends \Akami\Database
       }
     }
 
-    $this->connect();
+    if (!$this->connection) {
+      $this->connect();
+    }
   }
 
   /**
