@@ -173,7 +173,7 @@ class MySQL extends \Akami\Database
 
     foreach ($data as $key => $item)
     {
-      $conditions[] = '`' . $key . '` = "' . $this->escape_value($item) . '"';
+      $conditions[] = '`' . $key . '` = "' . $this->escapeValue($item) . '"';
     }
 
     $sql = 'INSERT INTO `' . $table . '` SET ' . implode(', ', $conditions) . ';';
@@ -206,7 +206,7 @@ class MySQL extends \Akami\Database
    */
   protected function quoteValue(value)
   {
-    return '\'' . str_replace(array('\'', '\\'), array('\'\'', '\\\\'), $string) . '\'';
+    return '\'' . str_replace(array('\'', '\\'), array('\'\'', '\\\\'), $this->escapeValue($value)) . '\'';
   }
 
   /**
@@ -282,5 +282,28 @@ class MySQL extends \Akami\Database
   public function close()
   {
     return mysql_close($this->connection);
+  }
+
+  /**
+   * Filter special characters
+   *
+   * @param string|array $value
+   * @return string|array
+   */
+  protected function escapeValue($value)
+  {
+    if (is_array($value))
+    {
+      foreach ($value as $k => $v)
+      {
+        $value[$k] = $this->escapeValue($v);
+      }
+    }
+      else
+    {
+      $value = mysql_real_escape_string($value);
+    }
+
+    return $value;
   }
 }
