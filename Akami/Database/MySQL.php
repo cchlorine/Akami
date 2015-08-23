@@ -142,17 +142,37 @@ class MySQL extends \Akami\Database
   /**
    * Produce where clause
    *
-   * @param string $where
+   * @param array $where
    * @return string
    */
   protected function where($where)
   {
-    $clause = '';
+    $conditions = array();
 
-    if (is_array($where))
+    foreach ($where as $key => $value)
     {
-      //
+      $conditions[] = '`' . $key . '` = "' . $this->escapeValue($value) . '"';
     }
+
+    return ' WHERE ' . implode(' AND ', $conditions);
+  }
+
+  /**
+   * Produce set clause
+   *
+   * @param array $where
+   * @return string
+   */
+  protected function set($conditions)
+  {
+    $conditions = array();
+
+    foreach ($where as $key => $item)
+    {
+      $conditions[] = '`' . $key . '` = "' . $this->escapeValue($item) . '"';
+    }
+
+    return ' SET ' . implode(', ', $conditions);
   }
 
   /**
@@ -191,11 +211,25 @@ class MySQL extends \Akami\Database
   /**
    * Delete data form table
    *
+   * @param string $table
+   * @param array $where
    * @return int
    */
   public function delete($table, $where)
   {
-    return $this->exec('DELETE FROM `' . $table . '`' . $this->where($whre));
+    return $this->exec('DELETE FROM `' . $table . '`' . $this->where($where) . ';');
+  }
+
+  /**
+   * Update data
+   *
+   * @param string $table
+   * @param array $data
+   * @param array $where
+   */
+  public function update($table, $data, $where)
+  {
+    return $this->exec('UPDATE FROM `' . $table . '`' . $this->where($where) . $this->set($data) . ';');
   }
 
   /**
