@@ -43,18 +43,19 @@ class Router
   /**
    * Add route
    *
-   * @param mixed    $method
-   * @param string   $route
-   * @param callable $callback
+   * @param mixed   $method
+   * @param string  $pattern
+   * @param mixed   $callback
    * @return \Akami\Router
    */
-  public function add($methods, $pattern, $callback)
+  public function add($methods, $pattern = '/', $callback = null)
   {
     // Trim the `/` from $pattern
     $route = trim($pattern, '/');
 
     // Push the array to the route
     foreach (explode('|', $methods) as $method) {
+      $method = strtoupper($method);
 
       // When $callback is callable
       if (is_callable($callback)) {
