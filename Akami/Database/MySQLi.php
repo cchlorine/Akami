@@ -116,7 +116,7 @@ class MySQLi extends \Akami\Database
 
     if ($this->affectedRows() > 0)
     {
-      $data = $result->fetch_all();
+      $data = $result->fetch_all(MYSQLI_ASSOC);
       $result->free();
     }
       else if (preg_match('/^select/i', trim($query)))
