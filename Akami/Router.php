@@ -98,8 +98,7 @@ class Router
         }, $matches, array_keys($matches));
 
         // Run the callback
-        call_user_func_array($route['callback'], $params);
-        return;
+        return call_user_func_array($route['callback'], $params);
       }
     }
 
