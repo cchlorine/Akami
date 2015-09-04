@@ -77,13 +77,13 @@ class Router
   {
     // When it cannot found the method in the route
     if (empty($this->route[$this->method])) {
-      return;
+      return call_user_func($callback);
     }
 
     // When it has custom RouteURL
     $url = $url === '' ? $this->pathinfo : $url;
 
-    array_walk($this->route[$this->method], function($route) use ($url) {
+    foreach ($this->route[$this->method] as $route) {
       // When match the pattern
       if (preg_match_all('#^' . $route['pattern'] . '$#', $url, $matches, PREG_OFFSET_CAPTURE)) {
         $matches = array_slice($matches, 1);
@@ -99,11 +99,10 @@ class Router
 
         // Run the callback
         call_user_func_array($route['callback'], $params);
-      } else { // When cannot match the route
-        if (is_callable($callback)) {
-          call_user_func($callback);
-        }
+        return;
       }
-    });
+    }
+
+    call_user_func($callback);
   }
 }
