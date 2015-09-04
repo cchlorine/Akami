@@ -315,7 +315,7 @@ class Akami
               <span class="bold">Message Reminder</span>
                - {$e->getMessage()}
             </header>
-            <p class="file"><span class="bold">Location: </span> - FILE: {$e->getfile()} LINE: {$e->getLine()}</p>
+            <p class="file"><span class="bold">Location: </span> {$e->getfile()} <i>({$e->getLine()})</i></p>
             <p class="message">{$msg}</p>
         </div>
     </div>
