@@ -25,6 +25,13 @@ class Akami
   protected $error = array();
 
   /**
+   * Library's container
+   *
+   * @var array
+   */
+  protected $container = array();
+
+  /**
    * a simple PSR-0 autoloader
    *
    * @param string $className className of the file
@@ -75,12 +82,7 @@ class Akami
     set_exception_handler(array($this, 'handleException'));
 
     // New router
-    $this->router = new \Akami\Router;
-
-    if (isset($config['database']) && is_array($config['database']))
-    {
-      $this->database = \Akami\Database::init($config['database']);
-    }
+    $this->container['router'] = new \Akami\Router;
 
     return $this;
   }
@@ -95,7 +97,7 @@ class Akami
    */
   public function add($method, $route, $callback)
   {
-    $this->router->add($method, $route, $callback);
+    $this->container['router']->add($method, $route, $callback);
 
     return $this;
   }
@@ -191,7 +193,7 @@ class Akami
   public function run($routeUrl = '')
   {
     // Route the url
-    $this->router->route($routeUrl);
+    $this->container['router']->route($routeUrl);
 
     restore_error_handler();
     restore_exception_handler();
