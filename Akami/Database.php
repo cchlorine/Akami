@@ -12,79 +12,29 @@ namespace Akami;
 
 class Database
 {
+  static protected $connection;
+
   /**
-   * Database adapter
+   * Init database
    *
-   * @var class
+   * @param array $config
    */
-  private $adapter;
-
-  /**
-   * SQL Query
-   *
-   * @var string
-   */
-  protected $query = '';
-
-  /**
-   * Log
-   */
-  protected $logs = array();
-
-  /**
-   * Init adapter
-   */
-  static public function init($config = array())
+  public function init($config = [])
   {
-    if (!$config)
-    {
-      return false;
-    }
-
-    $type = isset($config['database_type']) ? strtolower($config['database_type']) : 'mysql';
-
-    switch ($type)
-    {
-      case 'mysql':
-        if (isset($config['adapter']))
-        {
-          $adapter = ucfirst(strtolower($config['adapter']));
-        }
-          else if (class_exists('MySQLi'))
-        {
-          $adapter = 'MySQLi';
-        }
-          else if (class_exists('PDO'))
-        {
-          $adapter = 'PDO';
-        }
-          else
-        {
-          $adapter = 'MySQL';
-        }
-
-        break;
-
-      case 'mssql':
-        break;
-
-      case 'file':
-        break;
-    }
-
-    $adapter = '\\Akami\\Database\\' . $adapter;
-    $adapter = new $adapter($config);
-
-    return $adapter;
+    self::$connection = new \Akami\Database\Connection($config);
   }
 
   /**
-   * Print log
+   * Call static
    *
-   * @return array
+   * @param string $method
+   * @param array  $parameters
    */
-  public function log()
+  static public function __callStatic($method, $parameters)
   {
-    return $this->logs;
+    return call_user_func_array([
+      self::$connection,
+      $method
+    ], $parameters);
   }
 }

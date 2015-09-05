@@ -86,7 +86,8 @@ class Akami
 
     if (isset($config['database']) && is_array($config['database']))
     {
-      $this->container['database'] = new \Akami\Database;
+      class_alias('\Akami\Database', '\DB', true);
+      $this->container['database'] = new \DB;
       $this->container['database']->init($config['database']);
     }
 
