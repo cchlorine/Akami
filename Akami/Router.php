@@ -24,7 +24,7 @@ class Router
    *
    * @var array
    */
-  protected $route = array();
+  protected $route = [];
 
   /**
    * Constructor

@@ -22,14 +22,14 @@ class Akami
    *
    * @var array
    */
-  protected $error = array();
+  protected $error = [];
 
   /**
    * Library's container
    *
    * @var array
    */
-  protected $container = array();
+  protected $container = [];
 
   /**
    * a simple PSR-0 autoloader
@@ -76,13 +76,19 @@ class Akami
    *
    * @return \Akami\Akami
    */
-  public function __construct($config = array())
+  public function __construct($config = [])
   {
-    set_error_handler(array($this, 'handleErrors'));
-    set_exception_handler(array($this, 'handleException'));
+    set_error_handler([$this, 'handleErrors']);
+    set_exception_handler([$this, 'handleException']);
 
     // New router
     $this->container['router'] = new \Akami\Router;
+
+    if (isset($config['database']) && is_array($config['database']))
+    {
+      $this->container['database'] = new \Akami\Database;
+      $this->container['database']->init($config['database']);
+    }
 
     return $this;
   }
